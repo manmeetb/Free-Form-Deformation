@@ -5,7 +5,7 @@ from matplotlib import cm
 import math
 
 # the file used for plotting the data
-CONST_InputFile1 = "sb.1XZ.dat"
+CONST_InputFile1 = "sb.1.dat"
 CONST_InputFile2 = "sb.0.dat"
 
 def plotData(tuplesArray):

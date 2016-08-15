@@ -28,7 +28,18 @@
 !	iIndex = 21411
 		
 
+	IF (intStepSize .EQ. 5) THEN
+	IF (MODULO(iIndex-1,1000) .EQ. 0) THEN
 	WRITE(*,*) "Index: ", iIndex
+	ENDIF
+	ENDIF	
+
+	IF (intStepSize .EQ. 1) THEN
+	IF (MODULO(iIndex,1000) .EQ. 0) THEN
+	WRITE(*,*) "Index: ", iIndex
+	ENDIF
+	ENDIF
+
 	!Get the x,y,z values of the solid boundary point in question
 	realX11 = SolidBoundaryPoints(intH,iIndex,1)
 	realY11 = SolidBoundaryPoints(intH,iIndex,2)
@@ -68,7 +79,8 @@
 	
 	! Tried varying initial conditions to no success
 	IF (intStatus .NE. 1) THEN
-		WRITE(*,*) "failed Newton Raphson"
+		WRITE(*,*) "Failed Newton Raphson"
+		WRITE(*,*) " 	Index: ", iIndex
 		STOP
 	ENDIF
 	ENDIF	
@@ -304,9 +316,9 @@
 	REAL :: BERNS, T,U,V,G1,G2,G3
 
 	!The n,m and l values for the bezier curve sum
-	intn = NXFFD-1
-	intm = NYFFD-1
-	intl = NZFFD-1
+	intn = NXFFD(intH)-1
+	intm = NYFFD(intH)-1
+	intl = NZFFD(intH)-1
 	
 	!initializing the parameters that will be output by the subroutine
 	G1 = 0.0

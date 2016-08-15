@@ -18,32 +18,22 @@
 !	such as the names of the files, what to constrain, num of pts, ...	
 
 	! the main program for the fortran routine. 
-
-	!Set the number of FFD points in each direction
-	NXFFD = 10		
-	NYFFD = 3
-	NZFFD = 8
-	
-	!Set the limits for the FFD Box
-	CONST_FFDXMin = 0.00001
-	CONST_FFDXMax = 1.000001
-	CONST_FFDYMin = -0.060001
-	CONST_FFDYMax = 0.060001
-	CONST_FFDZMin = -0.0001
-	CONST_FFDZMax = 3.06001
 	
 	SolidBoundaryPointsOutputFileInitial = 
-     . 	'FPD_CRMDesignInitialWinglet.txt'	
+     . 	'FPD_CRMWingBodyInitialAug14.txt'	
 	SolidBoundaryPointsOutputFileFinal = 
-     . 	'FPD_CRMDesignFinalWinglet.txt'	
+     . 	'FPD_CRMWingBodyFinalAug14.txt'	
 	SolidBoundaryPointsFile = 
-     . 	'NewWingDeformations/IF_crmdes.dat'
+     . 	'INPUT_CRMWINGBODYUn.txt'
 
 	CALL READSOLIDDATAMULTIPLE()
+
+	CALL SETFFDDATAAXIS()	
 	
-	CALL SETFFDDATAAUTOMULTIPLE()	
+!	CALL SETFFDDATAAUTOMULTIPLE()	
 
 	CALL PRINTINITIALDATAMULTIPLE()
+
 
 !	CALL LOADFFDINITIALDATA()
 	
@@ -56,9 +46,9 @@
 
 !	CALL PRINTINITIALDATA()
 	
-	CALL DEFORMLATTICE()
+!	CALL DEFORMLATTICE()
 	
-	CALL MODSHAPEFFD()
+!	CALL MODSHAPEFFD()
 
 	CALL PRINTFINALDATA()
 	
@@ -66,12 +56,18 @@
 	
 	!deallocating the array's space
 	DEALLOCATE(SolidBoundaryPoints)
+	DEALLOCATE(NXFFD)
+	DEALLOCATE(NYFFD)
+	DEALLOCATE(NZFFD)
+	DEALLOCATE(AxisDirection)
+	DEALLOCATE(NumSlices)
+		
 	DEALLOCATE(NumSolidBoundaryPoints)
-	DEALLOCATE(ZCrossSectionsSize)	
+	DEALLOCATE(CrossSectionsSize)	
 	DEALLOCATE(FFDPoints)
-	DEALLOCATE(ZCrossSectionsData)
-	DEALLOCATE(FFDBoxProperties)
-	DEALLOCATE(MaxZ)
-	DEALLOCATE(MinZ)		
+	DEALLOCATE(CrossSectionsData)
+	DEALLOCATE(FFDVolProperties)
+	DEALLOCATE(MaxValueElem)
+	DEALLOCATE(MinValueElem)		
 	STOP
 	END

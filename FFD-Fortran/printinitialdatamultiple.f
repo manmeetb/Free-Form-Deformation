@@ -18,10 +18,12 @@
 		
 	!First write the FFD Point Data 
 	!Print the title along with the number of points
-	WRITE(14,*) "FFD Points ", (NXFFD)*(NYFFD)*(NZFFD)
-	DO 10 i = 1, NXFFD
-	DO 10 j = 1, NYFFD
-	DO 10 k = 1, NZFFD
+	WRITE(14,*) "FFD Points ", (NXFFD(intH))*
+     . 	(NYFFD(intH))*(NZFFD(intH))
+
+	DO 10 i = 1, NXFFD(intH)
+	DO 10 j = 1, NYFFD(intH)
+	DO 10 k = 1, NZFFD(intH)
 		WRITE(14,*) (i-1), " " ,(j-1), " " ,(k-1)
 		WRITE(14,*) FFDPoints(intH,i,j,k,1), " ", 
      . 	FFDPoints(intH,i,j,k,2), " ", FFDPoints(intH,i,j,k,3)

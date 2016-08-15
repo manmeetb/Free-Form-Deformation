@@ -1,0 +1,14 @@
+Number of Elements
+Element
+NXFFD,NYFFD,NZFFD
+Axis
+NumSlices
+2
+1
+10, 3, 8
+3
+20
+2
+10,3,8
+1
+20

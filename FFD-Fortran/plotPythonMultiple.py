@@ -11,14 +11,17 @@ import math
     This file will be able to plot the data from the FFD processing 
     algorithm when multiple elements are involved
 """
-CONST_DATAFILEInitial = "FPD_CRMDesignInitialWinglet.txt"
-CONST_DATAFILEFinal = "FPD_CRMDesignFinalWinglet.txt"
+CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug14.txt"
+CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug14.txt"
+
+
 
 CONST_nXFDD = 10
 CONST_nYFDD = 3
 CONST_nZFDD = 8
 
-CONST_ElementTag = "WingLess"
+#CONST_ElementTag = "WingLess"
+CONST_ElementTag = ""
 
 # The method used for loading the data from the files
 # into the data structures
@@ -225,13 +228,13 @@ def plotElements(fig, ax, ElementsSbpData, ElementsFFDData, NumElements,c1,c2,\
         
         if(i == 0):
             #ax.plot_trisurf(zSolid, xSolid, ySolid, cmap=cm.jet, linewidth=0.2)
-            Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=10, c=c1)
-            Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=10, c= c2)
+            Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c1)
+            Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=30, c= c2)
             #Axes3D.plot_wireframe(ax, zFFD, xFFD, yFFD)
         if(i == 1):
             #ax.plot_trisurf(xSolid, zSolid, ySolid, cmap=cm.jet, linewidth=0.2)
-            Axes3D.scatter(ax, xSolid,zSolid, ySolid, s=10, c=c3)
-            Axes3D.scatter(ax, xFFD, zFFD, yFFD, s=10, c= c4)
+            Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c3)
+            Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=30, c= c4)
             #Axes3D.plot_wireframe(ax, xFFD, zFFD, yFFD)
     
 
@@ -264,13 +267,13 @@ def main():
     
     plotElements(fig, ax, ElementsSbpDataInit,ElementsFFDDataInit, \
                  CONST_NumElements, 'b', 'r', 'b', 'r')
-    plotElements(fig,ax, ElementsSbpDataFinal, ElementsFFDDataFinal, \
-                 CONST_NumElements, 'y', 'g', 'y', 'g')
+        #plotElements(fig,ax, ElementsSbpDataFinal, ElementsFFDDataFinal, \
+                 #CONST_NumElements, 'y', 'g', 'y', 'g')
 
 
-    ax.set_xlabel('X axis')
-    ax.set_ylabel('Y axis')
-    ax.set_zlabel('Z axis')
+    ax.set_xlabel('Z axis')
+    ax.set_ylabel('X axis')
+    ax.set_zlabel('Y axis')
 
     Axes3D.set_xlim(ax, [0, 1900])
     Axes3D.set_ylim(ax, [0, 3000])
