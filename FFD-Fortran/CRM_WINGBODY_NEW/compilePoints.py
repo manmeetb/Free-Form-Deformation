@@ -21,9 +21,9 @@ along which to place the cross sections, etc ...
 """
 
 CONST_NumElements = 2
-CONST_FileStringsList = ["sb.0Sorted.dat", "sb.1XZSorted.dat"]
+CONST_FileStringsList = ["sb.0.dat", "sb.1.dat"]
 
-CONST_OutputFile = "INPUT_CRMWINGBODY.txt"
+CONST_OutputFile = "INPUT_CRMWINGBODYUn.txt"
 
 
 # the function used for reading in the data from each
@@ -69,7 +69,7 @@ def outputData(ElementsSolidBodyPoints):
     for i in range(CONST_NumElements):
         outputFile.write(str(len(ElementsSolidBodyPoints[i])) + "\n")
         for point in ElementsSolidBodyPoints[i]:
-            outputFile.write(str(point[0]) + ", " + str(point[1]) + ", " + str(point[2]) + ", " + str(point[3]) + "\n")
+            outputFile.write(str(point[0]) + ", " + str(point[1]) + ", " + str(point[2]) + ", " + str(0) + "\n")
     
     outputFile.close()
 

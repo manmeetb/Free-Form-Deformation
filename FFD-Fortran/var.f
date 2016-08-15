@@ -1,15 +1,15 @@
-		MODULE VAR
+	MODULE VAR
 
-		CHARACTER(40) :: SolidBoundaryPointsFile
-		CHARACTER(40) :: SolidBoundaryPointsFile1
-		CHARACTER(40) :: SolidBoundaryPointsFile2
+	CHARACTER(40) :: SolidBoundaryPointsFile
+	CHARACTER(40) :: SolidBoundaryPointsFile1
+	CHARACTER(40) :: SolidBoundaryPointsFile2
 
-		CHARACTER(40) :: SolidBoundaryPointsOutputFileInitial
-		CHARACTER(40) :: SolidBoundaryPointsOutputFileFinal
-		CHARACTER(40) :: InputFile
-		CHARACTER(40) :: OutputFile
-		SAVE SolidBoundaryPointsFile, SolidBoundaryPointsOutputFileInitial 
-		SAVE SolidBoundaryPointsOutputFileFinal, InputFile, OutputFile
+	CHARACTER(40) :: SolidBoundaryPointsOutputFileInitial
+	CHARACTER(40) :: SolidBoundaryPointsOutputFileFinal
+	CHARACTER(40) :: InputFile
+	CHARACTER(40) :: OutputFile
+	SAVE SolidBoundaryPointsFile, SolidBoundaryPointsOutputFileInitial 
+	SAVE SolidBoundaryPointsOutputFileFinal, InputFile, OutputFile
 		
 	! creating an array that will hold the x,y and z values of the solid boundary points. 
 	! The array will be made in the following format:
@@ -22,14 +22,14 @@
 	! when multiple elements are being used, SolidBodyPointIndex is the going to be the max 
 	! number of solid bnd pts of one of the elements.
 		
-		REAL*8, ALLOCATABLE::SolidBoundaryPoints(:,:,:)
-		INTEGER :: SolidBoundaryPointsSize
+	REAL*8, ALLOCATABLE::SolidBoundaryPoints(:,:,:)
+	INTEGER :: SolidBoundaryPointsSize
 		
 		! This array will hold the number of points for each element. The way the datastructure is
 		! set up is NumSolidBoundaryPoints(index of the Element, number of solid boundary points
 		! for that element)
-		INTEGER, ALLOCATABLE::NumSolidBoundaryPoints(:,:)
-		INTEGER :: NumElements	! the number of elements	
+	INTEGER, ALLOCATABLE::NumSolidBoundaryPoints(:,:)
+	INTEGER :: NumElements	! the number of elements	
 	! Create a multidimensional array datastructure that will hold the different z slices
 	! and their information. This information includes the max and min x,y and z values of each cross section
 	! The data is stored in the following format: ZCrossSectionsData(BodyIndex, CrossSectionIndex, 6)
@@ -38,8 +38,23 @@
 	! In addition, ZCrossSectionsSize is an array which holds the number of cross sections
 	! for each element (so that we know how far to loop when moving through the ZCrossSections
 	! Data array
-		REAL*8, ALLOCATABLE::ZCrossSectionsData(:,:,:)
-		INTEGER, ALLOCATABLE :: ZCrossSectionsSize(:,:)
+	REAL*8, ALLOCATABLE::ZCrossSectionsData(:,:,:)
+	INTEGER, ALLOCATABLE :: ZCrossSectionsSize(:,:)
+
+
+! This data structure holds the data for each cross section for a specific body. It will
+! have the following format: CrossSectionData(BodyIndex, SliceIndex, 6). The 6 have the 
+! following values: 1-2 is for xmax, xmin, and so on.
+	REAL*8, ALLOCATABLE::CrossSectionsData(:,:,:)
+! Holds the size of the the cross section data (ie the number of slices that were studied
+! for each body. So the paramter it takes is body index
+	INTEGER, ALLOCATABLE::CrossSectionsSize(:) 
+
+! The axis direction to be used. 
+	INTEGER, ALLOCATABLE :: AxisDirection(:)
+! The number of slices of the object to study
+	INTEGER, ALLOCATABLE :: NumSlices(:)
+
 
 
 	! The ffd points array has the following format. FFDPoints(BodyIndex,I,J,K, 3), where
@@ -49,11 +64,13 @@
 	REAL*8, ALLOCATABLE::FFDPoints(:,:,:,:,:)
 
 ! The number of FFD points in each direction
-	INTEGER :: NXFFD
-	INTEGER :: NYFFD
-	INTEGER :: NZFFD
+	INTEGER, ALLOCATABLE :: NXFFD(:)
+	INTEGER, ALLOCATABLE :: NYFFD(:)
+	INTEGER, ALLOCATABLE :: NZFFD(:)
+	! Used for allocating the FFD points array
+	INTEGER :: MaxNXFFD, MaxNYFFD, MaxNZFFD
 
-	SAVE NXFFD, NYFFD, NZFFD
+	SAVE MaxNXFFD, MaxNYFFD, MaxNZFFD
 
 	INTEGER :: FFDPointsSize
 	REAL*8 :: CONST_FFDXMax, CONST_FFDXMin, CONST_FFDYMax, CONST_FFDYMin
@@ -69,6 +86,13 @@
 	REAL*8, ALLOCATABLE :: MaxZ(:,:)
 	REAL*8, ALLOCATABLE :: MinZ(:,:)
 
+! The maximum and minimum x,y and z values for each element. The data structure
+! has the following form MaxValueElem(numElements,3) where 1-3 are for the max x
+! y and z values.
+	REAL*8, ALLOCATABLE :: MaxValueElem(:,:)
+	REAL*8, ALLOCATABLE :: MinValueElem(:,:)
+	
+
 ! The FFDBoxLimits
 	REAL*8 :: FFDZMax, FFDZMin, FFDXMaxEpsilon 
 	REAL*8 :: FFDXMinEpsilon, FFDYMaxEpsilon, FFDYMinEpsilon
@@ -77,7 +101,17 @@
 ! properties: FFDBoxProperties(BodyIndex,NZFFD, 5), where the 5 is for z, 
 ! xMax, xMin, yMax and yMin for the given cross section. 
 	REAL*8, ALLOCATABLE::FFDBoxProperties(:,:,:)
+
+! Holds the properties of the specific FFD volume for the body. Holds the following in
+! the data structure: FFDVolProperties(BodyIndex, numPlanes, 7). Here, the first value 
+! will hold the location of the plane along the axis chosen and the 6 values hold
+! the max and min x,y and z values for the plane (two of these will be unused)   
+	REAL*8, ALLOCATABLE::FFDVolProperties(:,:,:)	
 	
+! The information for each element based on its runcard. The dimension will be 
+! ElementRuncard(numElements, 2), 1 = axis direction, 2 = NXFFD, 3 = NYFFD, 
+! 4 = NZFFD, 5 = number of planes along axis direction
+
 	SAVE WingMaxZ, WingMinZ, FFDZMax, FFDZMin, FFDXMaxEpsilon
 	SAVE FFDXMinEpsilon, FFDYMaxEpsilon, FFDYMinEpsilon
 
