@@ -22,12 +22,16 @@
 	! when multiple elements are being used, SolidBodyPointIndex is the going to be the max 
 	! number of solid bnd pts of one of the elements.
 		
-	REAL*8, ALLOCATABLE::SolidBoundaryPoints(:,:,:)
+
+	! The array for holding all the solid boundary points. The format will be 
+	! ALLSBPts(SolidPointIndex, 8), where the 7 holds for 1-3 (x,y,z), 4-6 (t,u,v)
+	! 7 = point label, 8 = extra
+	REAL*8, ALLOCATABLE::SolidBoundaryPoints(:,:)
 	INTEGER :: SolidBoundaryPointsSize
-		
-		! This array will hold the number of points for each element. The way the datastructure is
-		! set up is NumSolidBoundaryPoints(index of the Element, number of solid boundary points
-		! for that element)
+	
+	! This array will hold the number of points for each element. The way the datastructure is
+	! set up is NumSolidBoundaryPoints(index of the Element, number of solid boundary points
+	! for that element)
 	INTEGER, ALLOCATABLE::NumSolidBoundaryPoints(:,:)
 	INTEGER :: NumElements	! the number of elements	
 	! Create a multidimensional array datastructure that will hold the different z slices
@@ -54,7 +58,9 @@
 	INTEGER, ALLOCATABLE :: AxisDirection(:)
 ! The number of slices of the object to study
 	INTEGER, ALLOCATABLE :: NumSlices(:)
-
+! The data strucutre that lets us know whether a box should be 
+! placed or not
+	INTEGER, ALLOCATABLE :: FFDBoolean(:)
 
 
 	! The ffd points array has the following format. FFDPoints(BodyIndex,I,J,K, 3), where

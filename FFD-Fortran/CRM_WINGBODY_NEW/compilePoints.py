@@ -6,7 +6,7 @@ and then these are printed into one file. The printing format is the
 following.
 
 - Num Elements
-- element with maximum number of points (for fortran when creating arrays)
+- Total Number of Points (for fortran when creating arrays)
 - Num Points Element 1
     (list points)
 - Num Points Element 2
@@ -23,7 +23,7 @@ along which to place the cross sections, etc ...
 CONST_NumElements = 2
 CONST_FileStringsList = ["sb.0.dat", "sb.1.dat"]
 
-CONST_OutputFile = "INPUT_CRMWINGBODYUn.txt"
+CONST_OutputFile = "INPUT_CRMWINGBODY2.txt"
 
 
 # the function used for reading in the data from each
@@ -56,14 +56,13 @@ def outputData(ElementsSolidBodyPoints):
     # write the number of elements
     outputFile.write(str(CONST_NumElements) + "\n")
     
-    maxPts = 0
+    totalPts = 0
 
-    #find the maximum number of points
+    #find the total number of points
     for i in range(CONST_NumElements):
-        if (len(ElementsSolidBodyPoints[i]) > maxPts):
-            maxPts = len(ElementsSolidBodyPoints[i])
+        totalPts = totalPts + len(ElementsSolidBodyPoints[i])
 
-    outputFile.write(str(maxPts) + "\n")
+    outputFile.write(str(totalPts) + "\n")
     
     #print the data for each element
     for i in range(CONST_NumElements):

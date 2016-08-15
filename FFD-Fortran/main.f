@@ -20,15 +20,17 @@
 	! the main program for the fortran routine. 
 	
 	SolidBoundaryPointsOutputFileInitial = 
-     . 	'FPD_CRMWingBodyInitialAug14.txt'	
+     . 	'FPD_CRMWingBodyInitialAug15_2.txt'	
 	SolidBoundaryPointsOutputFileFinal = 
-     . 	'FPD_CRMWingBodyFinalAug14.txt'	
+     . 	'FPD_CRMWingBodyFinalAug15_2.txt'	
 	SolidBoundaryPointsFile = 
-     . 	'INPUT_CRMWINGBODYUn.txt'
+     . 	'INPUT_CRMWINGBODY2.txt'
+
 
 	CALL READSOLIDDATAMULTIPLE()
-
+!	WRITE(*,*) "completed read"
 	CALL SETFFDDATAAXIS()	
+!	WRITE(*,*) "completed set ffd"
 	
 !	CALL SETFFDDATAAUTOMULTIPLE()	
 
@@ -62,7 +64,6 @@
 	DEALLOCATE(AxisDirection)
 	DEALLOCATE(NumSlices)
 		
-	DEALLOCATE(NumSolidBoundaryPoints)
 	DEALLOCATE(CrossSectionsSize)	
 	DEALLOCATE(FFDPoints)
 	DEALLOCATE(CrossSectionsData)

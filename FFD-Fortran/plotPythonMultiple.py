@@ -11,8 +11,8 @@ import math
     This file will be able to plot the data from the FFD processing 
     algorithm when multiple elements are involved
 """
-CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug14.txt"
-CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug14.txt"
+CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug15_2.txt"
+CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug15_2.txt"
 
 
 

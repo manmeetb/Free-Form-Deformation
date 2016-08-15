@@ -17,7 +17,7 @@
 ! The file has the following format:
 !
 !- Num Elements
-!- element with maximum number of points (for fortran when creating arrays)
+!- Total Number of points (for fortran when creating arrays)
 !- Num Points Element 1
 !    (list points)
 !- Num Points Element 2
@@ -31,18 +31,17 @@
 	NumElements = intNumElements	
 
 
-	! read the maximum number of points possible for an element
-	intMaxPts = 0
-	READ(14,*,IOSTAT=io), intMaxPts
+	! read the total number of points possible for an element
+	intTotalPts = 0
+	READ(14,*,IOSTAT=io), intTotalPts
 
 	! allocate the solid boundary points array that will be 
 	! used for holding all the points
-	ALLOCATE(SolidBoundaryPoints(intNumElements, intMaxPts, 7))
+	ALLOCATE(SolidBoundaryPoints(intTotalPts, 8))
+	SolidBoundaryPointsSize = intTotalPts
 
-	! allocate the array for the number of solid body points for each
-	! element
-	ALLOCATE(NumSolidBoundaryPoints(intNumElements, 1)) 
 
+	intIndex = 0
 	!read in the data now for each element
 	DO 10 intI = 1, NumElements
 	intNumPts = 0
@@ -50,33 +49,34 @@
 	!Allocate the arrays now to fill in all the data	
 
 	READ(14,*,IOSTAT=io), intNumPts
-	!WRITE(*,*) "num points: ", intNumPts	
-	!Store the number of points for the ith element
-	NumSolidBoundaryPoints(intI, 1) = intNumPts
-	DO 20 intJ = 1, intNumPts
 
+	DO 20 intJ = 1, intNumPts
+		intIndex = intIndex + 1
 		READ(14,*, IOSTAT = io), rx,ry,rz, rl
-		SolidBoundaryPoints(intI,intJ,1) = rx	
-		SolidBoundaryPoints(intI,intJ,2) = ry	
-		SolidBoundaryPoints(intI,intJ,3) = rz
+		SolidBoundaryPoints(intIndex,1) = rx	
+		SolidBoundaryPoints(intIndex,2) = ry	
+		SolidBoundaryPoints(intIndex,3) = rz
 		
 		!T,U,V data set to 0 initially
-		SolidBoundaryPoints(intI,intJ,4) = 0	
-		SolidBoundaryPoints(intI,intJ,5) = 0	
-		SolidBoundaryPoints(intI,intJ,6) = 0	
+		SolidBoundaryPoints(intIndex,4) = 0	
+		SolidBoundaryPoints(intIndex,5) = 0	
+		SolidBoundaryPoints(intIndex,6) = 0	
 
-		! the label value for the point
-		SolidBoundaryPoints(intI,intJ,7) = rl	
+		! The element that the point belongs to
+		SolidBoundaryPoints(intIndex,7) = intI
+
+		! the extra label value for the point
+		SolidBoundaryPoints(intIndex,8) = rl	
 	
   20	CONTINUE
   10	CONTINUE	
 	
 	CLOSE(14) !Close the file after the number of points has now been computed
-
+	
 
 	! Read the runcard file 
 	! In the variables, RC is for runcard	
-	OPEN(UNIT = 15, FILE = "runcard.txt")
+	OPEN(UNIT = 15, FILE = "runcardWF.txt")
 
 	! The first 5 lines do not contain information
 	DO 21 intI = 1,5
@@ -126,6 +126,13 @@
 	MaxNXFFD = intMaxNXFFD
 	MaxNYFFD = intMaxNYFFD
 	MaxNZFFD = intMaxNZFFD
+
+!	DO 100 intI = 1, SolidBoundaryPointsSize
+!	WRITE(*,*) SolidBoundaryPoints(intI,1), 
+!     . 	SolidBoundaryPoints(intI,2), 
+!     .	SolidBoundaryPoints(intI,3) 
+
+!  100	CONTINUE
 
 	
 	END

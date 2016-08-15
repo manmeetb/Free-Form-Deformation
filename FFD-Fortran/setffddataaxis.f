@@ -9,13 +9,74 @@
 	ALLOCATE(FFDPoints(NumElements,MaxNXFFD,MaxNYFFD,
      . 	MaxNZFFD,3))
 	
-	
-	
-	CALL ATTACHINITIALMESHAXIS()
+	! Initialize all the data structures:
 
-	CALL CREATEFFDMESHAXIS()
+	! To attach the initial mesh, first we are going to create
+        ! a set of arrays that will hold information for each element
 
-		
+        ! Allocate the array that will be used for holding the number of cross sections
+        ! for each element
+	
+	ALLOCATE(CrossSectionsSize(NumElements))
+	
+		! For holding the limits of the box for the element
+	ALLOCATE(MaxValueElem(NumElements,3))
+	ALLOCATE(MinValueElem(NumElements,3))
+
+
+	intMaxSlices = 0
+	DO 10 intH = 1, NumElements
+	CrossSectionsSize(intH) = NumSlices(intH)
+	intMaxSlices = MAX(intMaxSlices,NumSlices(intH))
+  10	CONTINUE
+
+	!Allocate the array to hold all the cross section data
+	ALLOCATE(CrossSectionsData(NumElements,intMaxSlices,6))
+
+	! Create the data structure in charge of holding the 
+        ! FFD volume properties for each element
+       	! The second value will have to be the maximum number of 
+	! planes for the element
+
+
+	! Compute the maximum planes of all the elements for allocating
+	! the arrays
+	
+	intMaxPlanes = 0
+	DO 20 intH = 1,NumElements
+	IF (AxisDirection(intH) .EQ. 1) THEN
+	intMaxPlanes = MAX(intMaxPlanes,NXFFD(intH))
+	ENDIF	
+	
+	IF (AxisDirection(intH) .EQ. 2) THEN
+	intMaxPlanes = MAX(intMaxPlanes,NYFFD(intH))
+	ENDIF	
+
+	IF (AxisDirection(intH) .EQ. 3) THEN
+	intMaxPlanes = MAX(intMaxPlanes,NZFFD(intH))
+	ENDIF	
+
+  20	CONTINUE
+
+	ALLOCATE(FFDVolProperties(NumElements, intMaxPlanes,7))
+	
+
+
+
+
+
+
+
+
+
+
+	! Set the initial lattice
+	DO 100 intH = 1,NumElements		
+	
+	CALL ATTACHINITIALMESHAXIS(intH)
+	WRITE(*,*) "completed attach init mesh: ", intH
+	CALL CREATEFFDMESHAXIS(intH)
+	WRITE(*,*) "completed create ffd mesh axis: ", intH
 
 	
 
@@ -24,7 +85,6 @@
 	
 	!realEpsilon = 0.025
         realEpsilon = 5
-	DO 30 intH = 1,NumElements
 
        	intStepSize = 5
 
@@ -142,10 +202,9 @@
 	!EXIT
 
         ENDDO
+		
+  100	CONTINUE
 
-
-  30    CONTINUE
-
-	END
+ 	END
 
 

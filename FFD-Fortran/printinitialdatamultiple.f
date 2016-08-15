@@ -3,6 +3,7 @@
 	SUBROUTINE PRINTINITIALDATAMULTIPLE()
 	USE VAR
 
+
 	! print the data into the files in the following format
 	! First, print the number of elements, then print the element
 	! number and then the FFD data for that element
@@ -29,17 +30,29 @@
      . 	FFDPoints(intH,i,j,k,2), " ", FFDPoints(intH,i,j,k,3)
 	
   10	CONTINUE
-	intNumPoints = NumSolidBoundaryPoints(intH,1)
+
+	! Loop through and find out how many points there are 
+	! for the H'th element
+	intNumPoints = 0
+	DO 40 intI = 1,SolidBoundaryPointsSize
+	IF (SolidBoundaryPoints(intI,7) .EQ. intH) THEN
+	intNumPoints = intNumPoints + 1
+	ENDIF
+  40	CONTINUE
+
 	WRITE(14,*) "SolidBoundaryPointData ", 	intNumPoints
-	DO 20 intI = 1,intNumPoints
-		WRITE(14,*) SolidBoundaryPoints(intH,intI,1), " ",
-     .	SolidBoundaryPoints(intH,intI,2), " ",
-     .	SolidBoundaryPoints(intH,intI,3), " ",
-     .	SolidBoundaryPoints(intH,intI,7)
-		WRITE(14,*) SolidBoundaryPoints(intH,intI,4), " ",
-     .	SolidBoundaryPoints(intH,intI,5), " ",
-     . 	SolidBoundaryPoints(intH,intI,6)
-			
+	DO 20 intI = 1,SolidBoundaryPointsSize
+	
+	IF (SolidBoundaryPoints(intI,7) .EQ. intH) THEN
+		WRITE(14,*) SolidBoundaryPoints(intI,1), " ",
+     .	SolidBoundaryPoints(intI,2), " ",
+     .	SolidBoundaryPoints(intI,3), " ",
+     .	SolidBoundaryPoints(intI,8)
+		WRITE(14,*) SolidBoundaryPoints(intI,4), " ",
+     .	SolidBoundaryPoints(intI,5), " ",
+     . 	SolidBoundaryPoints(intI,6)		
+	ENDIF
+
   20	CONTINUE		
 
   30	CONTINUE

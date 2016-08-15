@@ -2,57 +2,26 @@
 
 	! The subroutine that is used for placing the initial FFD
 	! lattice
-	SUBROUTINE ATTACHINITIALMESHAXIS()
+	SUBROUTINE ATTACHINITIALMESHAXIS(H)
 	
 	USE VAR
 
-	! To attach the initial mesh, first we are going to create
-        ! a set of arrays that will hold information for each element
+	! The index of the element we are working with
+	INTEGER :: H
 
-        ! Allocate the array that will be used for holding the number of cross sections
-        ! for each element
-	
-	ALLOCATE(CrossSectionsSize(NumElements))
-	
-		! For holding the limits of the box for the element
-	ALLOCATE(MaxValueElem(NumElements,3))
-	ALLOCATE(MinValueElem(NumElements,3))
-
-
-	! Set a number for the number of slices of the body that will be 
-        ! studied. These slices will have a min and max z value. Then,
-        ! the max and min x and y values will be found also and stored. Then,
-        ! When a plane of points will need to be put, it will study the data 
-        ! from the slices that are in its viscinity
-
-        ! For the wing, the seperation of planes of points is quite wide 
-        ! near the center of the wing. There are about 60 planes so set the
-        ! number of slices to be around 20 just to be safe
-
-	! set the number of slices to study for each element based on what was 
-	! read from the runcard files.
-
-	intMaxSlices = 0
-	DO 10 intH = 1, NumElements
-	CrossSectionsSize(intH) = NumSlices(intH)
-	intMaxSlices = MAX(intMaxSlices,NumSlices(intH))
-  10	CONTINUE
-
-	!Allocate the array to hold all the cross section data
-	ALLOCATE(CrossSectionsData(NumElements,intMaxSlices,6))
-
-	
+	intH = H
 	! Loop through all the element's points once to get 
 	! the limit values for it (x max/min, etc)
 
-	DO 20 intH = 1, NumElements
-        DO 30 intI = 1, NumSolidBoundaryPoints(intH,1)
-        
-	realX = SolidBoundaryPoints(intH,intI,1)
-	realY = SolidBoundaryPoints(intH,intI,2)
-	realZ = SolidBoundaryPoints(intH,intI,3)
+	indexFirstFlag = 0
+        DO 30 intI = 1, SolidBoundaryPointsSize
+        IF (SolidBoundaryPoints(intI,7) .EQ. intH) THEN
+	! If this point belongs to our element
+	realX = SolidBoundaryPoints(intI,1)
+	realY = SolidBoundaryPoints(intI,2)
+	realZ = SolidBoundaryPoints(intI,3)
 	
-        IF (intI .EQ. 1) THEN
+        IF (indexFirstFlag .EQ. 0) THEN
 	! If this is the first point, set the initial values
 	MaxValueElem(intH,1) = realX
 	MaxValueElem(intH,2) = realY
@@ -61,33 +30,30 @@
 	MinValueElem(intH,1) = realX	
 	MinValueElem(intH,2) = realY
 	MinValueElem(intH,3) = realZ
-	
+	indexFirstFlag = 1
         ENDIF
 
 	! Keeping track of the maximum and minimum values
 	CALL SETMAXMIN(intH, realX, realY, realZ)
-
+	ENDIF
   30    CONTINUE
-  20    CONTINUE
 
 
 	! Print all the data
-	DO 100 intH = 1,NumElements
 	DO 200 intJ = 1,3
-	!WRITE(*,*) "Max",intJ,":",MaxValueElem(intH,intJ)
+!	WRITE(*,*) "Max",intJ,":",MaxValueElem(intH,intJ)
   200	CONTINUE
 	DO 300 intJ = 1,3
-	!WRITE(*,*) "Min",intJ,":",MinValueElem(intH,intJ)
+!	WRITE(*,*) "Min",intJ,":",MinValueElem(intH,intJ)
   300	CONTINUE
-  100	CONTINUE
-
+  
 
 
 	! Loop through each element and compute the data for the
 	! slices of the object depending on the axis direction
 	! that was chosen
 
-	DO 40 intH = 1,NumElements
+	
 	IF (AxisDirection(intH) .EQ. 1) THEN
 	CALL COMPUTEDATAX(intH)
 	ENDIF	
@@ -99,13 +65,10 @@
 	IF (AxisDirection(intH) .EQ. 3) THEN
 	CALL COMPUTEDATAZ(intH)
 	ENDIF
-  40	CONTINUE
-		
-
-
-
+	
 
 	END
+
 
 
 
@@ -143,10 +106,11 @@
 
 	! Loop through all the element's points now and fill
 	! the data for the slices
-	DO 51 intI = 1,NumSolidBoundaryPoints(H,1)
-	realXValue = SolidBoundaryPoints(H,intI,1)
-        realYValue = SolidBoundaryPoints(H,intI,2)
-        realZValue = SolidBoundaryPoints(H,intI,3)
+	DO 51 intI = 1,SolidBoundaryPointsSize
+	IF(SolidBoundaryPoints(intI,7) .EQ. H) THEN
+	realXValue = SolidBoundaryPoints(intI,1)
+        realYValue = SolidBoundaryPoints(intI,2)
+        realZValue = SolidBoundaryPoints(intI,3)
 
 	
 	!Find the cross section the point belongs to
@@ -195,19 +159,19 @@
 	ENDIF
 	ENDIF !End of relevant slice if statement
   52	CONTINUE !End of Cross sections loop
+	ENDIF
   51	CONTINUE !End of Solid points loop
 
 	
 	! Print all the cross section data
-	DO 200 intH = 1,NumElements
-	DO 210 intJ = 1,CrossSectionsSize(intH)
-	!WRITE(*,*) "Cross Sect Index: ", intJ
+	DO 210 intJ = 1,CrossSectionsSize(H)
+!	WRITE(*,*) "Cross Sect Index: ", intJ
 	DO 220 intm = 1,6
-	!WRITE(*,*) intm, ": ", CrossSectionsData(intH,intJ,intm)
+!	WRITE(*,*) intm, ": ", CrossSectionsData(H,intJ,intm)
 
   220	CONTINUE
   210	CONTINUE
-  200	CONTINUE 
+ 
 
 
 
@@ -248,10 +212,11 @@
 
 	! Loop through all the element's points now and fill
 	! the data for the slices
-	DO 51 intI = 1,NumSolidBoundaryPoints(H,1)
-	realXValue = SolidBoundaryPoints(H,intI,1)
-        realYValue = SolidBoundaryPoints(H,intI,2)
-        realZValue = SolidBoundaryPoints(H,intI,3)
+	DO 51 intI = 1,SolidBoundaryPointsSize
+	IF(SolidBoundaryPoints(intI,7) .EQ. H) THEN
+	realXValue = SolidBoundaryPoints(intI,1)
+        realYValue = SolidBoundaryPoints(intI,2)
+        realZValue = SolidBoundaryPoints(intI,3)
 
 	
 	!Find the cross section the point belongs to
@@ -300,19 +265,19 @@
 	ENDIF
 	ENDIF !End of relevant slice if statement
   52	CONTINUE !End of Cross sections loop
+	ENDIF
   51	CONTINUE !End of Solid points loop
 
 	
 	! Print all the cross section data
-	DO 200 intH = 1,NumElements
-	DO 210 intJ = 1,CrossSectionsSize(intH)
-	!WRITE(*,*) "Cross Sect Index: ", intJ
+	DO 210 intJ = 1,CrossSectionsSize(H)
+!	WRITE(*,*) "Cross Sect Index: ", intJ
 	DO 220 intm = 1,6
-	!WRITE(*,*) intm, ": ", CrossSectionsData(intH,intJ,intm)
+!	WRITE(*,*) intm, ": ", CrossSectionsData(H,intJ,intm)
 
   220	CONTINUE
   210	CONTINUE
-  200	CONTINUE 
+ 
 
 	END
 
@@ -349,10 +314,11 @@
 
 	! Loop through all the element's points now and fill
 	! the data for the slices
-	DO 51 intI = 1,NumSolidBoundaryPoints(H,1)
-	realXValue = SolidBoundaryPoints(H,intI,1)
-        realYValue = SolidBoundaryPoints(H,intI,2)
-        realZValue = SolidBoundaryPoints(H,intI,3)
+	DO 51 intI = 1,SolidBoundaryPointsSize
+	IF (SolidBoundaryPoints(intI,7) .EQ. H) THEN
+	realXValue = SolidBoundaryPoints(intI,1)
+        realYValue = SolidBoundaryPoints(intI,2)
+        realZValue = SolidBoundaryPoints(intI,3)
 
 	
 	!Find the cross section the point belongs to
@@ -401,20 +367,18 @@
 	ENDIF
 	ENDIF !End of relevant slice if statement
   52	CONTINUE !End of Cross sections loop
+	ENDIF
   51	CONTINUE !End of Solid points loop
 
 	
 	! Print all the cross section data
-	DO 200 intH = 1,NumElements
-	DO 210 intJ = 1,CrossSectionsSize(intH)
-	!WRITE(*,*) "Cross Sect Index: ", intJ
+	DO 210 intJ = 1,CrossSectionsSize(H)
+!	WRITE(*,*) "Cross Sect Index: ", intJ
 	DO 220 intm = 1,6
-	!WRITE(*,*) intm, ": ", CrossSectionsData(intH,intJ,intm)
+!	WRITE(*,*) intm, ": ", CrossSectionsData(H,intJ,intm)
 
   220	CONTINUE
   210	CONTINUE
-  200	CONTINUE 
-
 
 	END
 

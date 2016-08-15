@@ -21,13 +21,11 @@
 	
 
 	!to make execution faster, check every 4 points of object
-	DO 100 iIndex = 1,NumSolidBoundaryPoints(intH,1),intStepSize
-
-!	iIndex = 29038
+	DO 100 iIndex = 1,SolidBoundaryPointsSize,intStepSize
 	
-!	iIndex = 21411
-		
-
+	! Only use the points that belong to the element
+	IF (SolidBoundaryPoints(iIndex,7) .EQ. intH) THEN	
+	
 	IF (intStepSize .EQ. 5) THEN
 	IF (MODULO(iIndex-1,1000) .EQ. 0) THEN
 	WRITE(*,*) "Index: ", iIndex
@@ -41,9 +39,9 @@
 	ENDIF
 
 	!Get the x,y,z values of the solid boundary point in question
-	realX11 = SolidBoundaryPoints(intH,iIndex,1)
-	realY11 = SolidBoundaryPoints(intH,iIndex,2)
-	realZ11 = SolidBoundaryPoints(intH,iIndex,3)	
+	realX11 = SolidBoundaryPoints(iIndex,1)
+	realY11 = SolidBoundaryPoints(iIndex,2)
+	realZ11 = SolidBoundaryPoints(iIndex,3)	
 
 !	WRITE(*,*) "x: ", realX11
 !	WRITE(*,*) "y: ", realY11
@@ -87,9 +85,9 @@
 
 
 	!Fill the T,U,V information into the solid boundary point array
-	SolidBoundaryPoints(intH,iIndex,4) = realAns1 !T
-	SolidBoundaryPoints(intH,iIndex,5) = realAns2 !U
-	SolidBoundaryPoints(intH,iIndex,6) = realAns3 !V
+	SolidBoundaryPoints(iIndex,4) = realAns1 !T
+	SolidBoundaryPoints(iIndex,5) = realAns2 !U
+	SolidBoundaryPoints(iIndex,6) = realAns3 !V
 
 !	WRITE(*,*) "T: ", realAns1
 !	WRITE(*,*) "U: ", realAns2
@@ -148,6 +146,7 @@
 !	ENDIF
 
 
+	ENDIF
   100	CONTINUE
 
 

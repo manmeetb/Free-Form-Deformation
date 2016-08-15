@@ -3,42 +3,14 @@
 	! The subroutine that is used for creating the initial FFD mesh
 	! around the object
 
-	SUBROUTINE CREATEFFDMESHAXIS()
+	SUBROUTINE CREATEFFDMESHAXIS(H)
 	USE VAR
 
-	! Create the data structure in charge of holding the 
-        ! FFD volume properties for each element
-       	! The second value will have to be the maximum number of 
-	! planes for the element
+	! The index of the element
+	INTEGER :: H
 
-
-	! Compute the maximum planes of all the elements for allocating
-	! the arrays
-	
-	intMaxPlanes = 0
-	DO 20 intH = 1,NumElements
-	IF (AxisDirection(intH) .EQ. 1) THEN
-	intMaxPlanes = MAX(intMaxPlanes,NXFFD(intH))
-	ENDIF	
-	
-	IF (AxisDirection(intH) .EQ. 2) THEN
-	intMaxPlanes = MAX(intMaxPlanes,NYFFD(intH))
-	ENDIF	
-
-	IF (AxisDirection(intH) .EQ. 3) THEN
-	intMaxPlanes = MAX(intMaxPlanes,NZFFD(intH))
-	ENDIF	
-
-  20	CONTINUE
-
-
-
-	ALLOCATE(FFDVolProperties(NumElements, intMaxPlanes,7))
-	
-
-	! make the properties of the FFD box for each object
-	DO 10 intH = 1,NumElements
-	
+	intH = H
+	! make the properties of the FFD box for the object
 	IF (AxisDirection(intH) .EQ. 1) THEN
 	CALL INITIALIZEBOXX(intH)
 	ENDIF
@@ -50,11 +22,10 @@
 	IF(AxisDirection(intH) .EQ. 3) THEN
 	CALL INITIALIZEBOXZ(intH)
 	ENDIF
-  10	CONTINUE
-	
-	DO 50 intH = 1,NumElements
+
+!	WRITE(*,*) "Completed Initialize Box"
+
 	CALL FILLFFDDATAAXIS(intH)
-  50	CONTINUE	
 
 	END
 
