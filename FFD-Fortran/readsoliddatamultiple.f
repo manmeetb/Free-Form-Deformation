@@ -76,10 +76,10 @@
 
 	! Read the runcard file 
 	! In the variables, RC is for runcard	
-	OPEN(UNIT = 15, FILE = "runcardWF.txt")
+	OPEN(UNIT = 15, FILE = "runcardSep.txt")
 
-	! The first 5 lines do not contain information
-	DO 21 intI = 1,5
+	! The first 6 lines do not contain information
+	DO 21 intI = 1,6
 	READ(15,*,IOSTAT=io), Dummy
 	!WRITE(*,*) "Dummy: ", Dummy
   21	CONTINUE
@@ -93,19 +93,22 @@
 	ALLOCATE(NZFFD(NumElements))
 	ALLOCATE(AxisDirection(NumElements))
 	ALLOCATE(NumSlices(NumElements))	
-
+	ALLOCATE(Rank(NumElements))
+	
 	! Read the file and load the data for each element
 	DO 30 intI = 1, intNumElementsRC
 	READ(15,*,IOSTAT=io), intH
 	READ(15,*,IOSTAT=io), int1, int2, int3
 	READ(15,*,IOSTAT=io), int4
 	READ(15,*,IOSTAT=io), int5
+	READ(15,*,IOSTAT=io), int6
 
 	NXFFD(intH) = int1
 	NYFFD(intH) = int2
 	NZFFD(intH) = int3
 	AxisDirection(intH) = int4
 	NumSlices(intH) = int5
+	Rank(int6) = intH ! Setting what element should be processed when
   30	CONTINUE
 	
 	CLOSE(15)	
@@ -134,9 +137,57 @@
 
 !  100	CONTINUE
 
+
+	! Read the connectivity file to find out what faces of the 
+	! element are connected to which elements.
 	
+	! First, set the data structure that will hold the connectivity
+	! info for all the elements
+	ALLOCATE(ConnectivityInfo(NumElements,6,2))
+	
+	! Initialize all the element data to -1:
+	DO 60 intH = 1,NumElements
+	DO 61 intI = 1,6
+	DO 62 intJ = 1,2
+	ConnectivityInfo(intH,intI,intJ) = -1
+  62	CONTINUE
+  61	CONTINUE
+  60	CONTINUE
+	
+	! Read the runcard file 
+	! In the variables, RC is for runcard	
+	OPEN(UNIT = 16, FILE = "connectivity.txt")
+	
+	! The first line doesn't contain any information
+	READ(16,*,IOSTAT=io), Dummy
+		
+	intNumConnectInfo = 0
+	READ(16,*,IOSTAT=io), intNumConnectInfo
+	
+	intElem1=0
+	intElem2=0
+	intFace1=0
+	intFace2=0
+
+	DO 50 intI = 1,intNumConnectInfo
+	READ(16,*,IOSTAT=io), intElem1, intFace1, 
+     . 	intElem2, intFace2
+
+	!Set the data for each element's face		
+		!Set the data for the first element
+	ConnectivityInfo(intElem1, intFace1,1) = 
+     . 	intElem2
+	ConnectivityInfo(intElem1, intFace1,2) = 
+     . 	intFace2
+		!set the data for the other element 
+	ConnectivityInfo(intElem2, intFace2,1) = 
+     . 	intElem1
+	ConnectivityInfo(intElem2, intFace2,2) = 
+     . 	intFace1	
+	
+  50	CONTINUE	
+		
+	CLOSE(16)	 
 	END
-
-
 
 

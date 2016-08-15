@@ -1,8 +1,8 @@
 CF = gfortran
 LDFLAG = -framework Accelerate
 
-executable: var.o main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o deformlattice.o modshapeffd.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o
-	$(CF) -o $@ main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o var.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o deformlattice.o modshapeffd.o $(LDFLAG)
+executable: var.o main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o deformlattice.o modshapeffd.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o
+	$(CF) -o $@ main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o var.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o deformlattice.o modshapeffd.o $(LDFLAG)
 main.o: main.f
 	$(CF) -c main.f	
 
@@ -12,6 +12,9 @@ var.o: var.f
 
 attachffdnewtonconstraint.o: attachffdnewtonconstraint.f
 	$(CF) -c attachffdnewtonconstraint.f  
+
+changepointlabels.o: changepointlabels.f
+	$(CF) -c changepointlabels.f
 
 readsoliddata.o: readsoliddata.f
 	$(CF) -c readsoliddata.f

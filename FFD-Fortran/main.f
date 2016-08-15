@@ -20,11 +20,11 @@
 	! the main program for the fortran routine. 
 	
 	SolidBoundaryPointsOutputFileInitial = 
-     . 	'FPD_CRMWingBodyInitialAug15_2.txt'	
+     . 	'FPD_CRMWingBodyInitialAug15_2Sep.txt'	
 	SolidBoundaryPointsOutputFileFinal = 
-     . 	'FPD_CRMWingBodyFinalAug15_2.txt'	
+     . 	'FPD_CRMWingBodyFinalAug15_2Sep.txt'	
 	SolidBoundaryPointsFile = 
-     . 	'INPUT_CRMWINGBODY2.txt'
+     . 	'INPUT_CRMWINGBODYSepTot.txt'
 
 
 	CALL READSOLIDDATAMULTIPLE()
@@ -63,7 +63,9 @@
 	DEALLOCATE(NZFFD)
 	DEALLOCATE(AxisDirection)
 	DEALLOCATE(NumSlices)
-		
+	DEALLOCATE(Rank)
+	DEALLOCATE(ConnectivityInfo)	
+	
 	DEALLOCATE(CrossSectionsSize)	
 	DEALLOCATE(FFDPoints)
 	DEALLOCATE(CrossSectionsData)

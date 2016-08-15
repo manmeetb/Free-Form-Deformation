@@ -62,6 +62,8 @@
 ! placed or not
 	INTEGER, ALLOCATABLE :: FFDBoolean(:)
 
+! specifying what element to process when
+	INTEGER, ALLOCATABLE :: Rank(:)
 
 	! The ffd points array has the following format. FFDPoints(BodyIndex,I,J,K, 3), where
 	! the BodyIndex is for the body of question, (I,J,K) are for the local coordinates of the point 
@@ -97,7 +99,12 @@
 ! y and z values.
 	REAL*8, ALLOCATABLE :: MaxValueElem(:,:)
 	REAL*8, ALLOCATABLE :: MinValueElem(:,:)
-	
+
+! The array that will be in charge of holding the connnectivity information.
+! The information will be stored as follows: ConnectivityInfo(BodyIndex, 6, 2),
+! Where the 6 is for each face of the element and the 2 has 1 = other element's index
+! 2 = other element's connecting face
+	INTEGER, ALLOCATABLE :: ConnectivityInfo(:,:,:)	
 
 ! The FFDBoxLimits
 	REAL*8 :: FFDZMax, FFDZMin, FFDXMaxEpsilon 

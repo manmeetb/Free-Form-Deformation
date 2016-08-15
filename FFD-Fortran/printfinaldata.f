@@ -40,7 +40,7 @@
   40	CONTINUE
 
 	WRITE(14,*) "SolidBoundaryPointData ", 	intNumPoints
-	DO 20 intI = 1,intNumPoints
+	DO 20 intI = 1,SolidBoundaryPointsSize
 	IF (SolidBoundaryPoints(intI,7) .EQ. intH) THEN
 		WRITE(14,*) SolidBoundaryPoints(intI,1), " ",
      .	SolidBoundaryPoints(intI,2), " ",

@@ -71,20 +71,23 @@
 
 
 	! Set the initial lattice
-	DO 100 intH = 1,NumElements		
+	DO 100 intR = 1,NumElements
 	
+	! processing the right element
+	intH = Rank(intR)
+	
+	intLatticePoints = NXFFD(intH)*NYFFD(intH)*NZFFD(intH)
+	
+	IF(intLatticePoints .NE. 0) THEN
+		
 	CALL ATTACHINITIALMESHAXIS(intH)
-	WRITE(*,*) "completed attach init mesh: ", intH
 	CALL CREATEFFDMESHAXIS(intH)
-	WRITE(*,*) "completed create ffd mesh axis: ", intH
-
-	
 
 	!Now, adjust the shape so that it is completely contained in the FFD
 	! volume
 	
 	!realEpsilon = 0.025
-        realEpsilon = 5
+        realEpsilon = 15
 
        	intStepSize = 5
 
@@ -202,7 +205,13 @@
 	!EXIT
 
         ENDDO
-		
+
+	! Now that the lattice has been placed, we need to change
+	! the labels of points that are in the FFD volume.
+	CALL CHANGEPOINTLABELS(intH)	
+	
+
+	ENDIF	
   100	CONTINUE
 
  	END

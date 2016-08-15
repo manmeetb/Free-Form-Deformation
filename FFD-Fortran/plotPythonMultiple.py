@@ -11,8 +11,8 @@ import math
     This file will be able to plot the data from the FFD processing 
     algorithm when multiple elements are involved
 """
-CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug15_2.txt"
-CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug15_2.txt"
+CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug15_2Sep.txt"
+CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug15_2Sep.txt"
 
 
 
@@ -154,10 +154,10 @@ def loadDataFinal(ElementsSbpData, ElementsFFDData):
             IndexListFloat = []
             CoordinatesListFloat = []
             
-            for str in IndexListString:
-                IndexListFloat.append(float(str))
-            for str in CoordinatesListString:
-                CoordinatesListFloat.append(float(str))
+            for string in IndexListString:
+                IndexListFloat.append(float(string))
+            for string in CoordinatesListString:
+                CoordinatesListFloat.append(float(string))
             
             
             #store the index and point data which are in lists
@@ -173,18 +173,18 @@ def loadDataFinal(ElementsSbpData, ElementsFFDData):
         for k in range(numSBP):
             lineXYZ = file.readline()
             lineTUV = file.readline()
-            
             XYZListString = lineXYZ.split()
             TUVListString = lineTUV.split()
             
             #convert the lists into floats
             XYZListFloat = []
             TUVListFloat = []
-            
-            for str in XYZListString:
-                XYZListFloat.append(float(str))
-            for str in TUVListString:
-                TUVListFloat.append(float(str))
+            #print k
+            #print XYZListString
+            for string in XYZListString:
+                XYZListFloat.append(float(string))
+            for string in TUVListString:
+                TUVListFloat.append(float(string))
             
             
             
@@ -226,6 +226,12 @@ def plotElements(fig, ax, ElementsSbpData, ElementsFFDData, NumElements,c1,c2,\
         # element 1 is the fuselage whose x and z values were switched
         # to make z cross sections. So switch these back when plotting
         
+        #ax.plot_trisurf(zSolid, xSolid, ySolid, cmap=cm.jet, linewidth=0.2)
+        Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c1)
+        Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=30, c= c2)
+        #Axes3D.plot_wireframe(ax, zFFD, xFFD, yFFD)
+        
+        """
         if(i == 0):
             #ax.plot_trisurf(zSolid, xSolid, ySolid, cmap=cm.jet, linewidth=0.2)
             Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c1)
@@ -236,7 +242,7 @@ def plotElements(fig, ax, ElementsSbpData, ElementsFFDData, NumElements,c1,c2,\
             Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c3)
             Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=30, c= c4)
             #Axes3D.plot_wireframe(ax, xFFD, zFFD, yFFD)
-    
+        """
 
 
 # the main method
