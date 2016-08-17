@@ -31,7 +31,7 @@ import math
 
 
 #The data file with the initial data points
-CONST_DATAFILEInitial = "DataFiles/FortranPointDataCRMInitial.txt"
+CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug15_2Sep.txt"
 CONST_DATAFILEFinal ="DataFiles/FortranPointDataCRMFinal.txt"
 
 

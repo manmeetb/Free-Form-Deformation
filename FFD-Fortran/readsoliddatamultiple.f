@@ -37,7 +37,7 @@
 
 	! allocate the solid boundary points array that will be 
 	! used for holding all the points
-	ALLOCATE(SolidBoundaryPoints(intTotalPts, 8))
+	ALLOCATE(SolidBoundaryPoints(intTotalPts, 13))
 	SolidBoundaryPointsSize = intTotalPts
 
 
@@ -52,7 +52,8 @@
 
 	DO 20 intJ = 1, intNumPts
 		intIndex = intIndex + 1
-		READ(14,*, IOSTAT = io), rx,ry,rz, rl
+		READ(14,*, IOSTAT = io),rx,ry,rz,rl,ru,
+     . 	ri,ro,rp,rk
 		SolidBoundaryPoints(intIndex,1) = rx	
 		SolidBoundaryPoints(intIndex,2) = ry	
 		SolidBoundaryPoints(intIndex,3) = rz
@@ -65,8 +66,14 @@
 		! The element that the point belongs to
 		SolidBoundaryPoints(intIndex,7) = intI
 
-		! the extra label value for the point
-		SolidBoundaryPoints(intIndex,8) = rl	
+		! the extra labels for the point
+		SolidBoundaryPoints(intIndex,8) = rl
+		SolidBoundaryPoints(intIndex,9) = ru
+		SolidBoundaryPoints(intIndex,10) = ri
+		SolidBoundaryPoints(intIndex,11) = ro
+		SolidBoundaryPoints(intIndex,12) = rp
+		SolidBoundaryPoints(intIndex,13) = rk
+	
 	
   20	CONTINUE
   10	CONTINUE	
@@ -187,7 +194,8 @@
 	
   50	CONTINUE	
 		
-	CLOSE(16)	 
+	CLOSE(16)	
+
 	END
 
 

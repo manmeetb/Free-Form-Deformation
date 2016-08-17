@@ -18,24 +18,20 @@
 	
 	intStatusIndex = -1
 	
-	
+	intNumProcessed = 0	
+
+	realXtest = 0.0
+	realYtest = 0.0
+	realZtest = 0.0
 
 	!to make execution faster, check every 4 points of object
 	DO 100 iIndex = 1,SolidBoundaryPointsSize,intStepSize
 	
 	! Only use the points that belong to the element
 	IF (SolidBoundaryPoints(iIndex,7) .EQ. intH) THEN	
-	
-	IF (intStepSize .EQ. 5) THEN
-	IF (MODULO(iIndex-1,1000) .EQ. 0) THEN
-	WRITE(*,*) "Index: ", iIndex
-	ENDIF
-	ENDIF	
 
-	IF (intStepSize .EQ. 1) THEN
-	IF (MODULO(iIndex,1000) .EQ. 0) THEN
+	IF (MODULO(intNumProcessed,500) .EQ. 0) THEN
 	WRITE(*,*) "Index: ", iIndex
-	ENDIF
 	ENDIF
 
 	!Get the x,y,z values of the solid boundary point in question
@@ -61,10 +57,15 @@
 	! starting from 0.05 and increment by 0.05 each time
 	! for the initial guess
 	IF (intStatus .NE. 1) THEN
+	realMinGuess = -2.0
+	realMaxGuess = 2.0
+	realsp = 0.05
+	intNumGuesses = INT((realMaxGuess-realMinGuess)/realsp)
+
 	! we are going to range our guesses from 0.05
 	! to 0.95 with increments of 0.05
-	DO 25 intk=0,18
-	realGuess = 0.05 + REAL(intk)*0.05
+	DO 25 intk=0,intNumGuesses
+	realGuess = realMinGuess + REAL(intk)*realsp
 	CALL NEWTONSOLVE(realGuess,realGuess,realGuess,realX11,
      . 	realY11,realZ11, realAns1,realAns2,realAns3, intStatus, 
      . 	intH)
@@ -89,12 +90,20 @@
 	SolidBoundaryPoints(iIndex,5) = realAns2 !U
 	SolidBoundaryPoints(iIndex,6) = realAns3 !V
 
+	IF (realAns3 .LT. 0.0) THEN
+	WRITE(*,*) "x,y,z: ", realX11,realY11,realZ11
+	WRITE(*,*) "	t,u,v: ", realAns1, realAns2, realAns3
+	
+	ENDIF
+
+
+
 !	WRITE(*,*) "T: ", realAns1
 !	WRITE(*,*) "U: ", realAns2
 !	WRITE(*,*) "V: ", realAns3
 
 	! setup the T,U,V min/max values using what is at the first index
-	IF (iIndex .EQ. 1) THEN
+	IF (intNumProcessed .EQ. 0) THEN
 
 	realTmin = realAns1
 	realTmax = realAns1
@@ -130,6 +139,9 @@
 	
 	IF (realAns3 .LT. realVmin) THEN
 	realVmin = realAns3
+	realXtest = SolidBoundaryPoints(iIndex, 1)
+	realYtest = SolidBoundaryPoints(iIndex, 2)
+	realZtest = SolidBoundaryPoints(iIndex, 3)
 	ENDIF	
 	
 
@@ -145,7 +157,7 @@
 !		GOTO 200
 !	ENDIF
 
-
+	intNumProcessed = intNumProcessed + 1
 	ENDIF
   100	CONTINUE
 
@@ -159,8 +171,11 @@
 		!all points are inside the box. so set the flag to -1
 		intStatusIndex = -1
 	ENDIF
- 
 	
+	IF (realVmin .LT. 0.0) THEN 
+	WRITE(*,*) "vMin: ", realXtest, realYtest, realZtest	
+	ENDIF
+
 	END
 
 !This is the subroutine that will be responsible for using the Newton Raphson

@@ -20,11 +20,11 @@
 	! the main program for the fortran routine. 
 	
 	SolidBoundaryPointsOutputFileInitial = 
-     . 	'FPD_CRMWingBodyInitialAug15_2Sep.txt'	
+     . 	'FPD_CRMWingBodyInitialAug16.txt'	
 	SolidBoundaryPointsOutputFileFinal = 
-     . 	'FPD_CRMWingBodyFinalAug15_2Sep.txt'	
+     . 	'FPD_CRMWingBodyFinalAug16.txt'	
 	SolidBoundaryPointsFile = 
-     . 	'INPUT_CRMWINGBODYSepTot.txt'
+     . 	'INPUT_SepMeshFile.txt'
 
 
 	CALL READSOLIDDATAMULTIPLE()
@@ -47,7 +47,7 @@
 !	CALL ATTACHFFDNEWTON(intStatus)
 
 !	CALL PRINTINITIALDATA()
-	
+
 !	CALL DEFORMLATTICE()
 	
 !	CALL MODSHAPEFFD()

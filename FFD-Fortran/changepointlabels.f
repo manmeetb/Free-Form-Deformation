@@ -59,6 +59,47 @@
 	WRITE(*,*) "FFD MinZ: ", realMinZ
 	
 
+	realX = 1480.30420
+	realY = 158.571213
+	realZ = 250.766724
+
+	realT = 0.0
+	realU = 0.0
+	realV = 0.0
+
+	intStatus = -1
+		
+	CALL NEWTONSOLVE(0.5,0.5,0.5,realX,realY,realZ,
+     . 	realT,realU,realV, intStatus, intH)
+
+	IF (intStatus .NE. 1) THEN
+	! we are going to range our guesses from 0.05
+	! to 0.95 with increments of 0.05
+	DO 225 intk=0,18
+	realGuess = 0.05 + REAL(intk)*0.05
+	CALL NEWTONSOLVE(realGuess,realGuess,realGuess,realX,
+     . 	realY,realZ, realT,realU,realV, intStatus, 
+     . 	intH)
+	
+	IF (intStatus .EQ. 1) THEN
+	EXIT
+	ENDIF
+  225	CONTINUE
+	
+	! Tried varying initial conditions to no success
+	IF (intStatus .NE. 1) THEN
+		WRITE(*,*) "Failed Newton Raphson Change Pts"		
+		STOP
+	ENDIF
+	ENDIF	
+
+
+	WRITE(*,*) "Test T: ", realT
+	WRITE(*,*) "Test U: ", realU
+	WRITE(*,*) "Test V: ", realV
+
+!	STOP
+
 	! Now, loop through all points that are not part of the element 
 	! and compute their T,U,V values. 
 
@@ -67,6 +108,8 @@
 	realX = SolidBoundaryPoints(intI,1)
 	realY = SolidBoundaryPoints(intI,2)
 	realZ = SolidBoundaryPoints(intI,3)
+
+	
 
 	IF ((realX .LT. realMaxX) .AND. 
      . 	(realX .GT. realMinX) .AND. 
@@ -108,6 +151,9 @@
 	ENDIF
 	ENDIF	
 
+	WRITE(*,*) "realT: ", realT
+	WRITE(*,*) "realU: ", realU
+	WRITE(*,*) "realV: ", realV
 	! Check if the T,U and V values are between 0 and 1
 	
 	IF ((realT .GE. 0.0) .AND. (realT .LE. 1.0) 
@@ -115,7 +161,9 @@
      .  .AND. (realV .GE. 0.0) .AND. (realV .LE. 1.0)) THEN
 	!point is inside the box. Change the point's element
 	! label
+	WRITE(*,*) "oldH: ", SolidBoundaryPoints(intI,7)
 	SolidBoundaryPoints(intI,7) = intH	
+	WRITE(*,*) "newH: ", SolidBoundaryPoints(intI,7)
 		
 	ENDIF
  

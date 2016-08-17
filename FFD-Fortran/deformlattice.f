@@ -7,9 +7,46 @@
 	! subroutine will move the lattice points and print
 	! them into a new file called deformedLattice.txt
 
-	DO 10 intI = 1,NXFFD
-	DO 10 intJ = 1,NYFFD
-	DO 10 intK = 1,NZFFD
+	DO 10 intI = 1,NXFFD(intH)
+	DO 10 intJ = 1,NYFFD(intH)
+	DO 10 intK = 1,NZFFD(intH)
+
+	!Deform the faring points down by 100
+	IF(intH .EQ. 1) THEN
+	IF (intJ .NE. NYFFD(intH)) THEN
+	IF (intI .NE. 1) THEN
+	IF (intI .NE. NXFFD(intH)) THEN
+	realNewY = FFDPoints(intH,intI,intJ,intK,2)
+	realNewY = realNewY - 100
+	FFDPoints(intH,intI,intJ,intK,2) = realNewY
+
+	! If this point is connected to another one
+	IF (FFDPoints(intH,intI,intJ,intK,4) .NE. -1) THEN
+	intElem2 = FFDPoints(intH,intI,intJ,intK,4)
+	intI2 = FFDPoints(intH,intI,intJ,intK,5)
+	intJ2 = FFDPoints(intH,intI,intJ,intK,6)
+	intK2 = FFDPoints(intH,intI,intJ,intK,7)
+
+	realNewY = FFDPoints(intElem2,intI2,intJ2,intK2,2)
+	realNewY = realNewY - 100
+	FFDPoints(intElem2,intI2,intJ2,intK2,2) = realNewY	
+	ENDIF
+
+	ENDIF
+	ENDIF
+	ENDIF
+	ENDIF
+
+	! Deform the wing points too by 100
+!	IF(intH .EQ. 2) THEN
+!	IF (intK .EQ. 1) THEN
+!	realNewZ = FFDPoints(intH,intI,intJ,intK,3)
+!	realNewZ = realNewZ + 100
+!	FFDPoints(intH,intI,intJ,intK,3) = realNewZ
+!	ENDIF
+!	ENDIF
+
+
 
 	! Deform the fuselage now by increasing the z value by 
 	! 10% of the fuselage length
@@ -167,18 +204,18 @@
 
 	
 	! Shift only the last row of ffd points up by 0.3	
-	IF (intK .EQ. NZFFD) THEN
-		realYValue = FFDPoints(intH,intI,intJ,intK,2)
-		realYValue = realYValue + 0.3
-		FFDPoints(intH,intI,intJ,intK,2) = realYValue
-	ENDIF
-
-	! Shift only the second last row of ffd points down by 0.3	
-	IF (intK .EQ. (NZFFD-1)) THEN
-		realYValue = FFDPoints(intH,intI,intJ,intK,2)
-		realYValue = realYValue - 0.15
-		FFDPoints(intH,intI,intJ,intK,2) = realYValue
-	ENDIF
+!	IF (intK .EQ. NZFFD) THEN
+!		realYValue = FFDPoints(intH,intI,intJ,intK,2)
+!		realYValue = realYValue + 0.3
+!		FFDPoints(intH,intI,intJ,intK,2) = realYValue
+!	ENDIF
+!
+!	! Shift only the second last row of ffd points down by 0.3	
+!	IF (intK .EQ. (NZFFD-1)) THEN
+!		realYValue = FFDPoints(intH,intI,intJ,intK,2)
+!		realYValue = realYValue - 0.15
+!		FFDPoints(intH,intI,intJ,intK,2) = realYValue
+!	ENDIF
 
 
 	

@@ -65,9 +65,11 @@
 ! specifying what element to process when
 	INTEGER, ALLOCATABLE :: Rank(:)
 
-	! The ffd points array has the following format. FFDPoints(BodyIndex,I,J,K, 3), where
-	! the BodyIndex is for the body of question, (I,J,K) are for the local coordinates of the point 
-! for the given body (they start from 1 not 0) and the 1-3 numbers are the x,y,z values of the index. 
+! The ffd points array has the following format. FFDPoints(BodyIndex,I,J,K, 7), where
+! the BodyIndex is for the body of question, (I,J,K) are for the local coordinates of the point 
+! for the given body (they start from 1 not 0) and the 1-3 numbers are the x,y,z values of the index. Also,
+! 4 = a neighboring element and 5-7 = I,J,K values of Neighboring element's FFD point that this one is
+! coincident with
 
 	REAL*8, ALLOCATABLE::FFDPoints(:,:,:,:,:)
 

@@ -7,7 +7,7 @@
 	USE VAR
 
 	ALLOCATE(FFDPoints(NumElements,MaxNXFFD,MaxNYFFD,
-     . 	MaxNZFFD,3))
+     . 	MaxNZFFD,7))
 	
 	! Initialize all the data structures:
 
@@ -79,7 +79,9 @@
 	intLatticePoints = NXFFD(intH)*NYFFD(intH)*NZFFD(intH)
 	
 	IF(intLatticePoints .NE. 0) THEN
-		
+	
+	
+	CALL PLACECONTINUITYPOINTS(intH,intR)
 	CALL ATTACHINITIALMESHAXIS(intH)
 	CALL CREATEFFDMESHAXIS(intH)
 
@@ -87,7 +89,7 @@
 	! volume
 	
 	!realEpsilon = 0.025
-        realEpsilon = 15
+        realEpsilon = 25 
 
        	intStepSize = 5
 
@@ -97,6 +99,11 @@
 
         !REMOVE. USED ONLY FOR PLOTTING INITIAL BOX
         !EXIT
+	
+	!IF (intH .EQ. 2) THEN
+	!EXIT
+	!ENDIF
+
 
         intStatusIndex = -1
 
@@ -206,10 +213,33 @@
 
         ENDDO
 
+	
+	
+	!IF (intH .NE. 2) THEN
 	! Now that the lattice has been placed, we need to change
 	! the labels of points that are in the FFD volume.
 	CALL CHANGEPOINTLABELS(intH)	
+	!ENDIF
+
+	! Now that all the points have been changed, compute the T,U,V data
+	! one more time
+
 	
+        intStatusIndex = -1
+
+        realTmin = 0.0
+        realTmax = 0.0
+        realUmin = 0.0
+        realUmax = 0.0
+        realVmin = 0.0
+        realVmax = 0.0
+
+	!IF ((intH .NE. 2)) THEN
+        CALL ATTACHFFDNEWTON(intStatusIndex,realTmin,realTmax,
+     .  realUmin, realUmax, realVmin, realVmax, 1,
+     .  intH)
+	!ENDIF
+
 
 	ENDIF	
   100	CONTINUE

@@ -23,6 +23,52 @@
 	CALL INITIALIZEBOXZ(intH)
 	ENDIF
 
+
+
+	! If a plane on this element's FFD box will eventually
+	! be connected to another box then we must make that plane
+	! flat (for now do this, eventually make this plane arbitrarily
+	! shaped). 
+
+	! loop over all the faces of this element
+	DO 20 intF = 1,6
+	IF(ConnectivityInfo(intH,intF,1) .NE. -1) THEN
+	! We have a face with a connection to another face
+	intElem2 = ConnectivityInfo(intH,intF,1)
+	
+	!Check to make sure this element comes next in the queue
+	! ranking system (i.e. it is processed after)
+	DO 21 intR = 1,NumElements
+	! Checking all the elements that came before this one
+	IF(intR .GT. Rank(intH)) THEN
+	IF(Rank(intR) .EQ. intElem2) THEN
+		! Make the plane of FFD points flat
+	CALL MAKEFLATPLANE(intH,intF)
+	
+	ENDIF
+	ENDIF
+  21	CONTINUE	
+		
+	ENDIF	
+  20	CONTINUE
+
+
+
+	
+	! If we are building along the z axis
+	IF(AxisDirection(intH) .EQ. 1) THEN	
+	DO 10 intm = 1,NXFFD(H)
+	
+	WRITE(*,*) "ZMax: ",FFDVolProperties(H,intm,6)
+	WRITE(*,*) "ZMin: ",FFDVolProperties(H,intm,7) 		
+
+
+  10	CONTINUE
+	ENDIF
+
+
+
+
 !	WRITE(*,*) "Completed Initialize Box"
 
 	CALL FILLFFDDATAAXIS(intH)
@@ -138,9 +184,149 @@
 
   31	CONTINUE
 
-	
 	END
 
+	SUBROUTINE MAKEFLATPLANE(intH,intF)
+	USE VAR
+	! The element and it's ffd face which must be flat
+	INTEGER :: intH, intF
+
+	! Only make the FFD plane flat if it isn't orthogonal to
+	! the axis that was chosen to place points along. If this
+	! is the case, then the plane will be flat already
+
+	intAxis = AxisDirection(intH)
+
+	! The x direction was chosen	
+	IF (intAxis .EQ. 1) THEN
+	IF ((intF .NE. 1) .AND. (intF .NE. 2)) THEN
+	! Making sure that the face is not orthogonal 
+	! to the axis chosen. Also supply the number of 
+	! planes to change the data for
+	CALL CHANGEGLOBALDIM(intH, intF, NXFFD(intH))
+	ENDIF
+	ENDIF
+
+	! The y direction was chosen
+	IF (intAxis .EQ. 2) THEN
+	IF ((intF .NE. 3) .AND. (intF .NE. 4)) THEN
+	! Making sure that the face is not orthogonal 
+	! to the axis chosen
+	CALL CHANGEGLOBALDIM(intH, intF, NYFFD(intH))
+	ENDIF
+	ENDIF
+
+	! The z direction was chosen
+	IF (intAxis .EQ. 3) THEN
+	IF ((intF .NE. 5) .AND. (intF .NE. 6)) THEN
+	! Making sure that the face is not orthogonal 
+	! to the axis chosen
+	CALL CHANGEGLOBALDIM(intH, intF, NZFFD(intH))
+	ENDIF
+	ENDIF		 
+	
+
+	END
+
+	SUBROUTINE CHANGEGLOBALDIM(intH,intF,intNumPlanes)
+	USE VAR
+	
+	INTEGER :: intH, intF, intNumPlanes
+
+	IF (intF .EQ. 1) THEN
+	! Get the maximum x value of all the cross sections
+	! and set all the cross sections to have that value
+	! for max x
+
+	!Initializing the max x value
+	realMaxX = FFDVolProperties(intH,1,2)
+	DO 10 intI = 1,intNumPlanes
+	realMaxX = MAX(realMaxX, FFDVolProperties(intH,intI,2))
+  10	CONTINUE
+
+	! Change all cross sections max x value to be the global max
+	DO 11 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,2) = realMaxX
+  11	CONTINUE
+	ENDIF
+
+	
+	! Change X min
+	IF (intF .EQ. 2) THEN
+
+	!Initializing the min x value
+	realMinX = FFDVolProperties(intH,1,3)
+	DO 20 intI = 1,intNumPlanes
+	realMinX = MIN(realMinX, FFDVolProperties(intH,intI,3))
+  20	CONTINUE
+
+	! Change all cross sections max x value to be the global max
+	DO 21 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,3) = realMinX
+  21	CONTINUE
+	ENDIF
+
+	! Max Y
+	IF (intF .EQ. 3) THEN
+	realMaxY = FFDVolProperties(intH,1,4)
+	DO 30 intI = 1,intNumPlanes
+	realMaxY = MAX(realMaxY, FFDVolProperties(intH,intI,4))
+  30	CONTINUE
+
+	DO 31 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,4) = realMaxY
+  31	CONTINUE
+	ENDIF
+
+	
+	! Min Y
+	IF (intF .EQ. 4) THEN
+
+	!Initializing the min x value
+	realMinY = FFDVolProperties(intH,1,5)
+	DO 40 intI = 1,intNumPlanes
+	realMinY = MIN(realMinY, FFDVolProperties(intH,intI,5))
+  40	CONTINUE
+
+	! Change all cross sections max x value to be the global max
+	DO 41 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,5) = realMinY
+  41	CONTINUE
+	ENDIF
+
+
+	! Max Z
+	IF (intF .EQ. 5) THEN
+
+	realMaxZ = FFDVolProperties(intH,1,6)
+	DO 50 intI = 1,intNumPlanes
+	realMaxZ = MAX(realMaxZ, FFDVolProperties(intH,intI,6))
+	!WRITE(*,*) "max z: ", realMaxZ
+	!WRITE(*,*) "min z: ", FFDVolProperties(intH,intI,7)
+  50	CONTINUE
+
+	! Change all cross sections max x value to be the global max
+	DO 51 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,6) = realMaxZ
+  51	CONTINUE
+	ENDIF
+
+	
+	! Min Z
+	IF (intF .EQ. 6) THEN
+	realMinZ = FFDVolProperties(intH,1,7)
+	DO 60 intI = 1,intNumPlanes
+	realMinZ = MIN(realMinZ, FFDVolProperties(intH,intI,7))
+  60	CONTINUE
+
+	DO 61 intI = 1,intNumPlanes
+	FFDVolProperties(intH,intI,7) = realMinZ
+  61	CONTINUE
+	ENDIF
+
+
+
+	END
 
 
 	SUBROUTINE INITIALIZEBOXY(H)

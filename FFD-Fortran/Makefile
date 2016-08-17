@@ -1,8 +1,8 @@
 CF = gfortran
 LDFLAG = -framework Accelerate
 
-executable: var.o main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o deformlattice.o modshapeffd.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o
-	$(CF) -o $@ main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o var.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o deformlattice.o modshapeffd.o $(LDFLAG)
+executable: var.o main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o placecontinuitypoints.o deformlattice.o modshapeffd.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o
+	$(CF) -o $@ main.o readsoliddata.o readsoliddatamultiple.o loadffdinitialdata.f createffdmesh.o createffdrectexact.o createffdmeshaxis.o attachinitialmesh.o attachinitialmeshaxis.o var.o attachffdnewton.o attachffdnewtonconstraint.o setffddataautomultiple.o setffddataaxis.o fillffddataaxis.o updateffdbox.o changepointlabels.o placecontinuitypoints.o printinitialdata.o printinitialdatamultiple.o printfinaldata.o deformlattice.o modshapeffd.o $(LDFLAG)
 main.o: main.f
 	$(CF) -c main.f	
 
@@ -48,6 +48,9 @@ setffddataautomultiple.o: setffddataautomultiple.f
 
 setffddataaxis.o: setffddataaxis.f
 	$(CF) -c setffddataaxis.f
+
+placecontinuitypoints.o: placecontinuitypoints.f
+	$(CF) -c placecontinuitypoints.f
 
 updateffdbox.o: updateffdbox.f
 	$(CF) -c updateffdbox.f

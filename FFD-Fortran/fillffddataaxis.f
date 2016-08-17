@@ -32,6 +32,14 @@
 
 	END
 
+	! Here, note that we have done all the calculations assuming we
+	! can move all the FFD points. But, now we are only going to 
+	! move the points that are not constrained. By adding the part
+	! where all new points that are now in an element's FFD box 
+	! have their label changed, we shouldn't have to worry about moving
+	! the plane of points that are common with another element
+
+
 
 	! The subroutine that is used for creating the the plane of FFD
 	! points for the given element. It will take the index of the 
@@ -47,6 +55,7 @@
 	IF (axis .EQ. 1) THEN
 	realZMax = FFDVolProperties(Elem,CrossIndex,6)
         realZMin = FFDVolProperties(Elem,CrossIndex,7)
+
         realYMax = FFDVolProperties(Elem,CrossIndex,4)
         realYMin = FFDVolProperties(Elem,CrossIndex,5)
 
@@ -57,11 +66,16 @@
 
 	DO 70 intK=1,NZFFD(Elem)
         DO 70 intJ=1,NYFFD(Elem)
-                realZ = realZMin + realFFDdz*(intK-1)
-                realY = realYMin + realFFDdy*(intJ-1)
-                FFDPoints(Elem,intI,intJ,intK,1) = realX
-                FFDPoints(Elem,intI,intJ,intK,2) = realY
-                FFDPoints(Elem,intI,intJ,intK,3) = realZ
+  	! only move points that do not have a 
+		! continuity constraint       
+	IF (FFDPoints(Elem,intI,intJ,intK,4) .EQ. -1) THEN 
+	
+	realZ = realZMin + realFFDdz*(intK-1)
+        realY = realYMin + realFFDdy*(intJ-1)
+	FFDPoints(Elem,intI,intJ,intK,1) = realX
+        FFDPoints(Elem,intI,intJ,intK,2) = realY
+        FFDPoints(Elem,intI,intJ,intK,3) = realZ
+	ENDIF
   70    CONTINUE
 	
 	ENDIF
@@ -81,11 +95,13 @@
 
 	DO 80 intK=1,NZFFD(Elem)
         DO 80 intI=1,NXFFD(Elem)
-                realZ = realZMin + realFFDdz*(intK-1)
-                realX = realXMin + realFFDdx*(intI-1)
-                FFDPoints(Elem,intI,intJ,intK,1) = realX
-                FFDPoints(Elem,intI,intJ,intK,2) = realY
-                FFDPoints(Elem,intI,intJ,intK,3) = realZ
+        IF (FFDPoints(Elem,intI,intJ,intK,4) .EQ. -1) THEN
+	realZ = realZMin + realFFDdz*(intK-1)
+        realX = realXMin + realFFDdx*(intI-1)
+        FFDPoints(Elem,intI,intJ,intK,1) = realX
+        FFDPoints(Elem,intI,intJ,intK,2) = realY
+        FFDPoints(Elem,intI,intJ,intK,3) = realZ
+	ENDIF
   80    CONTINUE
 	
 	ENDIF
@@ -105,11 +121,14 @@
 
 	DO 60 intI=1,NXFFD(Elem)
         DO 60 intJ=1,NYFFD(Elem)
-                realX = realXMin + realFFDdx*(intI-1)
-                realY = realYMin + realFFDdy*(intJ-1)
-                FFDPoints(Elem,intI,intJ,intK,1) = realX
-                FFDPoints(Elem,intI,intJ,intK,2) = realY
-                FFDPoints(Elem,intI,intJ,intK,3) = realZ
+        
+	IF (FFDPoints(Elem,intI,intJ,intK,4) .EQ. -1) THEN
+	realX = realXMin + realFFDdx*(intI-1)
+        realY = realYMin + realFFDdy*(intJ-1)
+        FFDPoints(Elem,intI,intJ,intK,1) = realX
+        FFDPoints(Elem,intI,intJ,intK,2) = realY
+        FFDPoints(Elem,intI,intJ,intK,3) = realZ
+	ENDIF
   60    CONTINUE
 	
 	ENDIF

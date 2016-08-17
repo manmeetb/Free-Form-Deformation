@@ -6,22 +6,29 @@
 
 
 	DO 30 intH = 1,NumElements
+
+	intLatticePoints = NXFFD(intH)*NYFFD(intH)*NZFFD(intH)
+	
+	IF(intLatticePoints .NE. 0) THEN
+	
 	
 	! The subroutine that is used for modifying the shape of the 
 	! object when the FFD lattice points are moved
 
-	intn = NXFFD - 1
-	intm = NYFFD - 1
-	intl = NZFFD - 1
+	intn = NXFFD(intH) - 1
+	intm = NYFFD(intH) - 1
+	intl = NZFFD(intH) - 1
 
-	DO 10 intS = 1,NumSolidBoundaryPoints(intH,1)
+	DO 10 intS = 1,SolidBoundaryPointsSize
+	IF(SolidBoundaryPoints(intS,7) .EQ. intH) THEN
+	
 	realXNew = 0.0
 	realYNew = 0.0
 	realZNew = 0.0
 
-	realT = SolidBoundaryPoints(intH,intS,4)
-	realU = SolidBoundaryPoints(intH,intS,5)
-	realV = SolidBoundaryPoints(intH,intS,6)	
+	realT = SolidBoundaryPoints(intS,4)
+	realU = SolidBoundaryPoints(intS,5)
+	realV = SolidBoundaryPoints(intS,6)	
 	
 	IF ((realT .LE. 1) .AND. (realT .GE. 0)) THEN
 	IF ((realU .LE. 1) .AND. (realU .GE. 0) ) THEN
@@ -44,16 +51,19 @@
 
   20	CONTINUE	
 
-	SolidBoundaryPoints(intH,intS,1) =realXNew
-	SolidBoundaryPoints(intH,intS,2) =realYNew
-	SolidBoundaryPoints(intH,intS,3) =realZNew
+	SolidBoundaryPoints(intS,1) =realXNew
+	SolidBoundaryPoints(intS,2) =realYNew
+	SolidBoundaryPoints(intS,3) =realZNew
 
 	ENDIF
 	ENDIF
 	ENDIF
 
+
+	ENDIF
   10	CONTINUE
 	
+	ENDIF
   30	CONTINUE
 
 	END

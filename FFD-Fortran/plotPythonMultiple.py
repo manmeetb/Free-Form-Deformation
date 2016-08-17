@@ -11,8 +11,8 @@ import math
     This file will be able to plot the data from the FFD processing 
     algorithm when multiple elements are involved
 """
-CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug15_2Sep.txt"
-CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug15_2Sep.txt"
+CONST_DATAFILEInitial = "FPD_CRMWingBodyInitialAug16.txt"
+CONST_DATAFILEFinal = "FPD_CRMWingBodyFinalAug16.txt"
 
 
 
@@ -200,6 +200,12 @@ def loadDataFinal(ElementsSbpData, ElementsFFDData):
 def plotElements(fig, ax, ElementsSbpData, ElementsFFDData, NumElements,c1,c2,\
                  c3,c4):
     
+    xTest = [1472.573,1486.63]
+    yTest = [153.9531,167.740]
+    zTest = [213.63327, 313.408]
+    
+    #Axes3D.scatter(ax, zTest,xTest, yTest, s=300, c='k')
+    
     for i in range(NumElements):
         xSolid = []
         ySolid = []
@@ -239,10 +245,227 @@ def plotElements(fig, ax, ElementsSbpData, ElementsFFDData, NumElements,c1,c2,\
             #Axes3D.plot_wireframe(ax, zFFD, xFFD, yFFD)
         if(i == 1):
             #ax.plot_trisurf(xSolid, zSolid, ySolid, cmap=cm.jet, linewidth=0.2)
-            Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=20, c=c3)
+            Axes3D.scatter(ax, zSolid,xSolid, ySolid, s=10, c=c3)
             Axes3D.scatter(ax, zFFD, xFFD, yFFD, s=30, c= c4)
             #Axes3D.plot_wireframe(ax, xFFD, zFFD, yFFD)
         """
+
+def B(i,n,t):
+    return (math.factorial(n)/(math.factorial(i)*math.factorial(n-i)))*((1-t)**(n-i))*(t**i)
+
+def computeXYZfromBernsteinSum(t,u,v,FFDPointArray):
+    x = 0.
+    y = 0.
+    z = 0.
+    
+    # do a sum from i=0 to n, where n is the number of spaces between FFD points (so if there are n xFFD points then
+    # there are n-1 spaces).
+    n = CONST_nXFDD - 1
+    m = CONST_nYFDD - 1
+    l = CONST_nZFDD - 1
+    
+    for i in range(CONST_nXFDD):
+        for j in range(CONST_nYFDD):
+            for k in range(CONST_nZFDD):
+                for data in FFDPointArray:
+                    
+                    if(int(data[0][0])==i and int(data[0][1])==j \
+                       and int(data[0][2]) == k):
+                       x = x + B(i, n, t) * B(j, m, u) * B(k, l, v) * data[1][0]
+                       y = y + B(i, n, t) * B(j, m, u) * B(k, l, v) * data[1][1]
+                       z = z + B(i, n, t) * B(j, m, u) * B(k, l, v) * data[1][2]
+    return (x,y,z)
+
+def plotIsoparametricLine(ElementsFFDDataInit,fig,ax):
+    
+    i = 0
+    FFDPointArray = ElementsFFDDataInit[i]
+        
+    print "point0: " + str(computeXYZfromBernsteinSum(0.733534455, 0.543679595, 1.24942482, FFDPointArray))
+    numU = 30
+    numV = 30
+    numT = 30
+    
+    t = -1
+    u = -1
+    v = -1
+    
+    pointsArray = []
+    if(t>=0):
+        #Need to plot a constant t line
+        uMin = 0.0
+        vMin = 0.0
+        
+        du = (1. - 0.0)/float(numU-1)
+        dv = (1. - 0.0)/float(numV-1)
+        
+        for i in range(numU):
+            print "i: " + str(i)
+            for j in range(numV):
+                u = uMin + i*du
+                v = vMin + j*dv
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+    elif(u>=0):
+        #Need to plot a constant u line
+        tMin = 0.0
+        vMin = 0.0
+        
+        dt = (1. - 0.0)/float(numT-1)
+        dv = (1. - 0.0)/float(numV-1)
+        
+        for i in range(numT):
+            print "i: " + str(i)
+            for j in range(numV):
+                t = tMin + i*dt
+                v = vMin + j*dv
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+    elif(v>=0):
+        #Need to plot a constant v line
+        tMin = 0.0
+        uMin = 0.0
+        
+        dt = (1. - 0.0)/float(numT-1)
+        du = (1. - 0.0)/float(numU-1)
+        
+        for i in range(numT):
+            print "i: " + str(i)
+            for j in range(numU):
+                t = tMin + i*dt
+                u = uMin + j*du
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+
+
+    pointsArray.sort(key=lambda x: x[2], reverse=True)
+    x = []
+    y = []
+    z = []
+    for point in pointsArray:
+        x.append(point[0])
+        y.append(point[1])
+        z.append(point[2])
+
+    Axes3D.scatter(ax, z,x,y, s=20, c='b')
+
+    i = 1
+    FFDPointArray = ElementsFFDDataInit[i]
+   
+    """
+    Range:
+    FFD MaxX:    1724.89734
+    FFD MinX:    845.035400
+    FFD MaxY:    234.982056
+    FFD MinY:    65.9979019
+    FFD MaxZ:    229.873810
+    FFD MinZ:   -25.0000000
+    
+    """
+
+    """
+        x,y,z:    1477.94958       157.023026       237.454636
+        t,u,v:   -9.79601443E-02  0.167819858      -3.21748948
+        
+        x,y,z:    1480.30420       158.571213       250.766724
+        t,u,v:   0.423591226      0.589504182     -0.665205836
+        
+        x,y,z:    1482.83533       160.261246       265.041901
+        t,u,v:   0.421875060      0.589127183     -0.672547698
+        
+        x,y,z:    1477.87891       156.767914       237.449570
+        t,u,v:   0.425251901      0.589796484     -0.658110559
+        
+        x,y,z:    1480.11804       158.466248       250.763016
+        t,u,v:   0.423578471      0.589478552     -0.665200531
+        
+        x,y,z:    1471.54419       152.690903       203.111908
+        t,u,v:   0.204102591      0.466491759      -1.60756850
+        
+        x,y,z:    1477.51489       156.792114       237.446045
+        t,u,v:   -9.79608446E-02  0.167815223      -3.21752191
+        
+        x,y,z:    1491.00244       166.164597       313.359436
+        t,u,v:   0.205004781      0.467159122      -1.60412931
+        
+        x,y,z:    1475.00281       155.279877       225.069717
+        t,u,v:   0.204276904      0.466621190      -1.60688579
+       
+    """
+
+    print "point1: " + str(computeXYZfromBernsteinSum(0.423591226, 0.589504182, -0.665205836, FFDPointArray))
+
+
+    numU = 30
+    numV = 30
+    numT = 30
+    
+    t = -1
+    u = -1
+    v = -1
+    
+    pointsArray = []
+    if(t>=0):
+        #Need to plot a constant t line
+        uMin = 0.0
+        vMin = 0.0
+        
+        du = (1. - 0.0)/float(numU-1)
+        dv = (1. - 0.0)/float(numV-1)
+        
+        for i in range(numU):
+            print "i: " + str(i)
+            for j in range(numV):
+                u = uMin + i*du
+                v = vMin + j*dv
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+    elif(u>=0):
+        #Need to plot a constant u line
+        tMin = 0.0
+        vMin = 0.0
+        
+        dt = (1. - 0.0)/float(numT-1)
+        dv = (1. - 0.0)/float(numV-1)
+        
+        for i in range(numT):
+            print "i: " + str(i)
+            for j in range(numV):
+                t = tMin + i*dt
+                v = vMin + j*dv
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+    elif(v>=0):
+        #Need to plot a constant v line
+        tMin = 0.0
+        uMin = 0.0
+        
+        dt = (1. - 0.0)/float(numT-1)
+        du = (1. - 0.0)/float(numU-1)
+        
+        for i in range(numT):
+            print "i: " + str(i)
+            for j in range(numU):
+                t = tMin + i*dt
+                u = uMin + j*du
+                point = computeXYZfromBernsteinSum(t,u,v,FFDPointArray)
+                pointsArray.append(point)
+
+
+    pointsArray.sort(key=lambda x: x[2], reverse=True)
+    x = []
+    y = []
+    z = []
+    for point in pointsArray:
+        x.append(point[0])
+        y.append(point[1])
+        z.append(point[2])
+
+    Axes3D.scatter(ax, z,x,y, s=20, c='y')
+
+
+
+
 
 
 # the main method
@@ -273,8 +496,8 @@ def main():
     
     plotElements(fig, ax, ElementsSbpDataInit,ElementsFFDDataInit, \
                  CONST_NumElements, 'b', 'r', 'b', 'r')
-        #plotElements(fig,ax, ElementsSbpDataFinal, ElementsFFDDataFinal, \
-                 #CONST_NumElements, 'y', 'g', 'y', 'g')
+     #plotElements(fig,ax, ElementsSbpDataFinal, ElementsFFDDataFinal, \
+      #           CONST_NumElements, 'y', 'g', 'y', 'g')
 
 
     ax.set_xlabel('Z axis')
@@ -298,7 +521,7 @@ def main():
         Axes3D.set_xlim(ax, [0, 6])
         Axes3D.set_ylim(ax, [-1.5, 2.5])
         Axes3D.set_zlim(ax, [0, 2])
-
+    #plotIsoparametricLine(ElementsFFDDataInit,fig,ax)
     plt.show(block=True)
 
 

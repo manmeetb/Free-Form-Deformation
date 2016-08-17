@@ -45,7 +45,14 @@
 		WRITE(14,*) SolidBoundaryPoints(intI,1), " ",
      .	SolidBoundaryPoints(intI,2), " ",
      .	SolidBoundaryPoints(intI,3), " ",
-     .	SolidBoundaryPoints(intI,8)
+     .	SolidBoundaryPoints(intI,8), " ",
+     .	SolidBoundaryPoints(intI,9), " ",
+     .	SolidBoundaryPoints(intI,10), " ",
+     .	SolidBoundaryPoints(intI,11), " ",
+     .	SolidBoundaryPoints(intI,12), " ",
+     .	SolidBoundaryPoints(intI,13), " "
+
+
 		WRITE(14,*) SolidBoundaryPoints(intI,4), " ",
      .	SolidBoundaryPoints(intI,5), " ",
      . 	SolidBoundaryPoints(intI,6)
